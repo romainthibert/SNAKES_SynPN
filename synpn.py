@@ -11,12 +11,18 @@ def extend(module):
             module.PetriNet.__init__(self,name)
 
     class Transition(module.Transition):
-        def __init__(self, name, guard=None, **args):
+        def __init__(self, name, PN, guard=None, **args):
             self.inputLabel = args.pop("inputLabel",None)
+            self.PN = PN
             module.Transition.__init__(self, name, guard=None)
 
-        def enabled(self, binding, activeEvent):
-            if self.inputLabel == activeEvent:
+        def enabled(self, binding):
+            if self.inputLabel == self.PN.activeEvent:
                 return module.Transition.enabled(self, binding)
+            elif self.inputLabel == None:
+                return module.Transition.enabled(self, binding)
+            else:
+                return False
+
 
     return Transition, PetriNet
